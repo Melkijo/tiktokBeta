@@ -4,16 +4,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Auth extends JFrame implements ActionListener {
-    private JTextField usernameField;
+    private JTextField emailField;
+    private JTextField emailLoginField;
+
     private JPasswordField passwordField;
+    private JPasswordField passwordLoginField;
+
     private JButton loginButton;
     private JButton registerButton;
 
     private JButton registerAddButton;
     private JTextField nameField;
 
-    public Auth(){
+    private userList userList = new userList();
+
+    private boolean isLogin = false;
+
+    private LoginData loginData ;
+
+    public Auth( ){
         super("Login");
+
+
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
@@ -35,9 +47,9 @@ public class Auth extends JFrame implements ActionListener {
 
         this.add(emailLabel);
 
-        usernameField = new JTextField();
-        usernameField.setBounds(150, 70, 200, 30);
-        this.add(usernameField);
+        emailLoginField = new JTextField();
+        emailLoginField.setBounds(150, 70, 200, 30);
+        this.add(emailLoginField);
 
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setBounds(50, 120, 100, 30);
@@ -46,9 +58,9 @@ public class Auth extends JFrame implements ActionListener {
 
         this.add(passwordLabel);
 
-        passwordField = new JPasswordField();
-        passwordField.setBounds(150, 120, 200, 30);
-        this.add(passwordField);
+        passwordLoginField = new JPasswordField();
+        passwordLoginField.setBounds(150, 120, 200, 30);
+        this.add(passwordLoginField);
 
         loginButton = new JButton("Login");
         loginButton.setBounds(50, 170, 300, 40);
@@ -112,9 +124,9 @@ public class Auth extends JFrame implements ActionListener {
         emailLabel.setFont(new Font("Poppins", Font.PLAIN, 18));
         registerFrame.add(emailLabel);
 
-        usernameField = new JTextField();
-        usernameField.setBounds(150, 120, 200, 30);
-        registerFrame.add(usernameField);
+        emailField = new JTextField();
+        emailField.setBounds(150, 120, 200, 30);
+        registerFrame.add(emailField);
 
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setBounds(50, 170, 100, 30);
@@ -144,6 +156,34 @@ public class Auth extends JFrame implements ActionListener {
         System.out.println("Action Performed: " + e.getActionCommand());
         if(e.getSource() == loginButton){
             System.out.println("Login Button Clicked");
+
+
+            //check if the user data is in the userList
+            for(user user : userList.getUsers()){
+                if(user.getEmail().equals(emailLoginField.getText()) && user.getPassword().equals(passwordLoginField.getText())){
+                    System.out.println("Login Success");
+                    isLogin = true;
+                    break;
+                }
+            }
+
+            if(isLogin){
+                JOptionPane.showMessageDialog(this, "Login Success");
+                //close this page
+                this.dispose();
+
+                //add login Data
+                loginData = new LoginData(emailLoginField.getText(), passwordLoginField.getText());
+
+
+
+                TiktokFrame tiktokFrame = new TiktokFrame(isLogin, loginData);
+                tiktokFrame.setVisible(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Login Failed");
+            }
+
         }
         else if(e.getSource() == registerButton){
             System.out.println("Register Button Clicked");
@@ -152,6 +192,12 @@ public class Auth extends JFrame implements ActionListener {
         else if(e.getSource() == registerAddButton){
             System.out.println("Register Add Button Clicked");
             JOptionPane.showMessageDialog(this, "Register Success");
+
+            //add user to userList
+            user user = new user(nameField.getText(), emailField.getText(), passwordField.getText());
+            userList.addUser(user);
+            userList.showAllUser();
+
         }
     }
 }
