@@ -1,10 +1,10 @@
+import com.opencsv.CSVWriter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -175,6 +175,44 @@ private String tempFilePath;
         return fileName;
     }
 
+    public void writeDataLineByLine(String caption, String url, String username)
+    {
+        // first create file object for file placed at location
+        // specified by filepath
+        File file = new File("D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/posts.csv");
+        try {
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file, true);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+
+            // adding header to csv
+//            String[] header = { "Caption", "Url", "Username" };
+//            writer.writeNext(header);
+
+//             add data to csv
+//            String[] data1 = { "Panic abstract", "D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/src/images/4706201.jpg", "John Doe" };
+//            writer.writeNext(data1);
+//            String[] data2 = { "caption2", "D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/src/images/5171295.jpg", "username2" };
+//            writer.writeNext(data2);
+//            String[] data3 = { "caption3", "D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/src/images/5242220.jpg", "username3" };
+//            writer.writeNext(data3);
+
+            String[] data = { caption, url, username };
+            writer.writeNext(data);
+
+            // closing writer connection
+            writer.close();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Action Performed: " + e.getActionCommand());
@@ -187,6 +225,7 @@ private String tempFilePath;
                 Post post = new Post( captionField.getText(),tempFilePath, loginData.getName());
                 postList.addPost(post);
                 postList.showAllPost();
+                writeDataLineByLine( captionField.getText(),tempFilePath, loginData.getName());
 
                 JOptionPane.showMessageDialog(null, "File Berhasil di upload" + tempFilePath);
                 return;
@@ -248,6 +287,8 @@ private String tempFilePath;
                     Post post1 = new Post( captionField.getText(),filePath, loginData.getName());
                     postList.addPost(post);
 //                    postList.addPost(post1);
+                    writeDataLineByLine( captionField.getText(),convertedPath, loginData.getName());
+
 
                     postList.showAllPost();
 

@@ -1,3 +1,8 @@
+
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.View;
@@ -5,10 +10,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-
+import java.util.Scanner;
 
 
 public class TiktokFrame extends JFrame implements ActionListener {
@@ -30,10 +34,15 @@ public class TiktokFrame extends JFrame implements ActionListener {
 
     private LoginData loginData ;
 
+    public static final String delimiter = ",";
+
+
     TiktokFrame( boolean isLogin,LoginData loginData ) {
 
         this.isLogin = isLogin;
         this.loginData = loginData;
+
+        //read data from csv
 
 //    posts.add(new Post("caption1", "D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/src/images/4706201.jpg", "username1"));
 //    posts.add(new Post("caption2", "D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/src/images/5171295.jpg", "username2"));
@@ -175,6 +184,41 @@ public class TiktokFrame extends JFrame implements ActionListener {
         }
     }
 
+    public void readCSV()  {
+        try {
+            File file = new File("D:/Dunia Perkuliahan/Semester 7/regular/prognet/tubes/tiktokBeta4/posts.csv");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            String[] tempArr;
+
+            // Flag to indicate whether the current line is the header
+            boolean isHeader = true;
+
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    // Skip the header line
+                    isHeader = false;
+                    continue;
+                }
+
+                tempArr = line.split(delimiter);
+                for (int i = 0; i < tempArr.length; i++) {
+                    tempArr[i] = tempArr[i].replaceAll("\"", "");
+                }
+
+                postList.addPost(new Post(tempArr[0], tempArr[1], tempArr[2]));
+                System.out.println();
+            }
+            br.close();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+
+
+
 
 
 
@@ -197,6 +241,14 @@ public class TiktokFrame extends JFrame implements ActionListener {
         scrollableContainer.removeAll();
         scrollableContainer.revalidate();
         scrollableContainer.repaint();
+
+        //remove all data from postList
+        postList.setPosts(new ArrayList<>());
+
+
+
+        readCSV();
+
 
 
         // Make image, username and caption
@@ -277,6 +329,7 @@ public class TiktokFrame extends JFrame implements ActionListener {
         System.out.println("Action Performed: " + e.getActionCommand());
         if (e.getSource() == loginButton) {
             System.out.println("Login Button Clicked");
+
             openLoginPage();
         } else if (e.getSource() == uploadButton) {
             System.out.println("Upload Button Clicked");
